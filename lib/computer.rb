@@ -11,14 +11,24 @@ class Computer
   @computer_count = 0
 
   def initialize
+    @secret_word = select_random_word(read_dictionary)
     self.class.computer_count += 1
     handle_game_violations(ComputerLimitViolation, self.class.computer_count, COMPUTER_LIMIT)
   end
 
-  def read_dictionary(file='google-10000-english-no-swears.txt')
-    File.read(file)
+  def read_dictionary(file='google-10000-english-no-swears.txt', sep="\n")
+    File.read(file).split(sep)
+  end
+
+  def filter_words(dictionary)
+    dictionary.select{ |word| word.length.between?(5, 12)}
+  end
+
+  def select_random_word(dictionary)
+    filter_words(dictionary).sample
   end
 end
 
 c1 = Computer.new
-p c1.read_dictionary.class
+
+p c1.secret_word
