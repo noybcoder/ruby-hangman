@@ -10,6 +10,8 @@ class Computer
   COMPUTER_LIMIT = 1
   @computer_count = 0
 
+  attr_reader :secret_word
+
   def initialize
     @secret_word = select_random_word(read_dictionary)
     self.class.computer_count += 1
@@ -29,6 +31,6 @@ class Computer
   end
 end
 
-c1 = Computer.new
+# c1 = Computer.new
 
-p c1.secret_word
+# p c1.secret_word
