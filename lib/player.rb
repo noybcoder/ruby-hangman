@@ -15,22 +15,35 @@ class Player
     handle_game_violations(PlayerLimitViolation, self.class.player_count, PLAYER_LIMIT)
   end
 
-  def prompt(initial_msg, pattern, reminder_msg)
+  def prompt(initial_msg, pattern, reminder_msg, wrong_letters=nil, correct_letters=nil)
     puts initial_msg
 
     loop do
-      response = gets.chomp.downcase
-      return response if valid_prompt?(pattern, response)
+      # response = gets.chomp.downcase
+      # return response if valid_prompt?(pattern, response)
 
-      puts reminder_msg
+      # puts reminder_msg
+
+      response = gets.chomp.downcase
+      if !valid_prompt?(pattern, response)
+        puts reminder_msg
+      elsif wrong_letters.include?(response)
+        puts 'The letter already exists in wrong letters.'
+      elsif correct_letters.include?(response)
+        puts 'The letter is correct and already exists.'
+      else
+        return response
+      end
     end
   end
 
-  def make_guess
+  def make_guess(wrong_letters, correct_letters)
     prompt(
       'Please enter an alphabetical letter to make your guess:',
       /^[a-z]{1}$/,
-      "\nPlease enter only one letter from \"a\" to \"z\"."
+      "\nPlease enter only one letter from \"a\" to \"z\".",
+      wrong_letters,
+      correct_letters
     )
   end
 

@@ -27,36 +27,41 @@ class Game
   end
 
   def update_progress
-    guess = player.make_guess
+    guess = player.make_guess(@wrong_letters, @guess_display)
     answer = computer.secret_word
 
-    current_display = answer.chars.map {|char| char == guess ? guess : '?'}
-    if incorrect_guess?(current_display)
+    guess_matched_indices = get_guess_matched_indices(guess, answer)
+
+    if incorrect_guess?(guess_matched_indices)
       @remaining_chances -= 1
       store_wrong_letters(guess)
     else
-      update_display(current_display)
+      update_display(guess_matched_indices, guess)
     end
   end
 
-  def win?
-    @guess_display.none?('?')
+  def win?(symbol='?')
+    @guess_display.none?(symbol)
   end
 
   def lose?
     @remaining_chances.zero? && !win?
   end
 
-  def incorrect_guess?(current_display, symbol='?')
-    current_display.all?(symbol)
+  def get_guess_matched_indices(guess, answer)
+    answer.chars.each_index.select { |idx| answer[idx] == guess }
+  end
+
+  def incorrect_guess?(guess_match_indices)
+    guess_match_indices.empty?
   end
 
   def store_wrong_letters(guess)
     @wrong_letters << guess
   end
 
-  def update_display(current_display)
-    @guess_display = current_display
+  def update_display(guess_match_indices, guess)
+    guess_match_indices.each { |idx| @guess_display[idx] =  guess }
   end
 
 end
