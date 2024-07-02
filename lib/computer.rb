@@ -8,7 +8,7 @@ class Computer
     attr_accessor :computer_count
   end
 
-  COMPUTER_LIMIT = 1
+  COMPUTER_LIMIT = 2
   @computer_count = 0
 
   attr_reader :secret_word
@@ -34,15 +34,15 @@ class Computer
   def serialize
     JSON.dump({
       :computer_count => self.class.computer_count,
-      :secret_word => secret_word
+      :secret_word => secret_word,
     })
   end
 
   def self.deserialize(serialized_obj)
     data = JSON.load(serialized_obj)
     computer = new
-    self.class.computer_count = data['computer_count']
-    computer.local_variables_set(:secret_word, secret_word)
+    self.computer_count = data['computer_count']
+    computer.instance_variable_set(:@secret_word, data['secret_word'])
     computer
   end
 end

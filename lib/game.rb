@@ -14,6 +14,7 @@ class Game
   end
 
   def play
+    load_progress
     until win? || lose?
       puts @remaining_chances
       update_progress
@@ -28,27 +29,42 @@ class Game
     end
   end
 
-  def load_progress
-    decision = player.load_game
-    if decision == 'y'
-
-    end
+  def load_progress(file_name='save.txt')
+    from_json(file_name) if player.load_game == 'y'
   end
 
-  def save_progress
-    decision = player.save_game
-    if decision == 'y'
-      save = {
-        :player => @player.serialize,
-        :computer => @computer.serialize,
-        :remaining_chances => @remaining_chances,
-        :guess_display => @guess_display,
-        :wrong_letters => @wrong_letters
-      }
-    end
+  def from_json(file_name)
+    save = read_save(file_name)
+    @player = Player.deserialize(save['player'])
+    @computer = Computer.deserialize(save['computer'])
+    @remaining_chances = save['remaining_chances']
+    @guess_display = save['guess_display']
+    @wrong_letters = save['wrong_letters']
+  end
 
-    game_file = File.open('save.txt', 'w')
-    game_file.write(JSON.dump(save))
+  def read_save(file_name)
+    save = File.read(file_name)
+    JSON.load(save)
+  end
+
+  def save_progress(file_name='save.txt')
+    save = to_json if player.save_game == 'y'
+    write_save(save, file_name)
+  end
+
+  def to_json
+    JSON.dump({
+      :player => @player.serialize,
+      :computer => @computer.serialize,
+      :remaining_chances => @remaining_chances,
+      :guess_display => @guess_display,
+      :wrong_letters => @wrong_letters
+    })
+  end
+
+  def write_save(save, file_name)
+    game_file = File.open(file_name, 'w')
+    game_file.write(save)
     game_file.close
   end
 

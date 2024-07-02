@@ -8,7 +8,7 @@ class Player
     attr_accessor :player_count
   end
 
-  PLAYER_LIMIT = 1
+  PLAYER_LIMIT = 2
   @player_count = 0
 
   def initialize
@@ -64,13 +64,16 @@ class Player
   end
 
   def serialize
-    JSON.dump({:player_count => self.class.player_count})
+    JSON.dump({
+      :player_count => self.class.player_count,
+      :instantiated => @instantiated
+    })
   end
 
   def self.deserialize(serialized_obj)
     data = JSON.load(serialized_obj)
     player = new
-    self.class.player_count = data['player_count']
+    self.player_count = data['player_count']
     player
   end
 end
