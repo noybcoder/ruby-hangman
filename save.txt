@@ -1,0 +1,1 @@
+{"player":"{\"player_count\":1}","computer":"{\"computer_count\":1,\"secret_word\":\"suspect\"}","remaining_chances":10,"guess_display":["?","?","?","?","?","c","?"],"wrong_letters":[]}

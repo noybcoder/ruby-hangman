@@ -1,4 +1,5 @@
 require_relative 'errors'
+require 'json'
 
 class Player
   include CustomErrors
@@ -19,17 +20,12 @@ class Player
     puts initial_msg
 
     loop do
-      # response = gets.chomp.downcase
-      # return response if valid_prompt?(pattern, response)
-
-      # puts reminder_msg
-
       response = gets.chomp.downcase
       if !valid_prompt?(pattern, response)
         puts reminder_msg
-      elsif wrong_letters.include?(response)
+      elsif wrong_letters&.include?(response)
         puts 'The letter already exists in wrong letters.'
-      elsif correct_letters.include?(response)
+      elsif correct_letters&.include?(response)
         puts 'The letter is correct and already exists.'
       else
         return response
@@ -47,6 +43,14 @@ class Player
     )
   end
 
+  def load_game
+    prompt(
+      'Would you like to load your previous progress (y/n)?',
+      /^[yn]{1}$/,
+      "\nPlease enter only \"y\" or \"n\"."
+    )
+  end
+
   def save_game
     prompt(
       'Would you like to save your progress (y/n)?',
@@ -58,7 +62,15 @@ class Player
   def valid_prompt?(pattern, response)
     pattern.match(response)
   end
-end
 
-# player = Player.new
-# player.save_game
+  def serialize
+    JSON.dump({:player_count => self.class.player_count})
+  end
+
+  def self.deserialize(serialized_obj)
+    data = JSON.load(serialized_obj)
+    player = new
+    self.class.player_count = data['player_count']
+    player
+  end
+end

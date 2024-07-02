@@ -1,5 +1,6 @@
 require_relative 'player'
 require_relative 'computer'
+require 'json'
 
 class Game
   attr_accessor :player, :computer, :remaining_chances, :guess_display, :wrong_letters
@@ -16,6 +17,7 @@ class Game
     until win? || lose?
       puts @remaining_chances
       update_progress
+      save_progress
       puts guess_display.join(' ')
       p @wrong_letters
       if win?
@@ -24,6 +26,30 @@ class Game
         puts 'You lose!'
       end
     end
+  end
+
+  def load_progress
+    decision = player.load_game
+    if decision == 'y'
+
+    end
+  end
+
+  def save_progress
+    decision = player.save_game
+    if decision == 'y'
+      save = {
+        :player => @player.serialize,
+        :computer => @computer.serialize,
+        :remaining_chances => @remaining_chances,
+        :guess_display => @guess_display,
+        :wrong_letters => @wrong_letters
+      }
+    end
+
+    game_file = File.open('save.txt', 'w')
+    game_file.write(JSON.dump(save))
+    game_file.close
   end
 
   def update_progress

@@ -1,4 +1,5 @@
 require_relative 'errors'
+require 'json'
 
 class Computer
   include CustomErrors
@@ -29,8 +30,19 @@ class Computer
   def select_random_word(dictionary)
     filter_words(dictionary).sample
   end
+
+  def serialize
+    JSON.dump({
+      :computer_count => self.class.computer_count,
+      :secret_word => secret_word
+    })
+  end
+
+  def self.deserialize(serialized_obj)
+    data = JSON.load(serialized_obj)
+    computer = new
+    self.class.computer_count = data['computer_count']
+    computer.local_variables_set(:secret_word, secret_word)
+    computer
+  end
 end
-
-# c1 = Computer.new
-
-# p c1.secret_word
