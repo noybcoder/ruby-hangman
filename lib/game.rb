@@ -1,14 +1,16 @@
 require_relative 'player'
 require_relative 'computer'
+require_relative 'visualizable'
 require 'json'
 
 class Game
-  attr_accessor :player, :computer, :remaining_chances, :guess_display, :wrong_letters
+  include Visualizable
+  attr_accessor :player, :computer, :tries, :guess_display, :wrong_letters
 
   def initialize
     @player = Player.new
     @computer = Computer.new
-    @remaining_chances = 10
+    @tries = 10
     @guess_display = Array.new(computer.secret_word.length, '?')
     @wrong_letters = []
   end
@@ -16,11 +18,12 @@ class Game
   def play
     load_progress
     until win? || lose?
-      puts @remaining_chances
+      puts "\nRemaining Chances: #{@tries}\n"
+      display_hangman(@tries)
       update_progress
-      save_progress
       puts guess_display.join(' ')
       p @wrong_letters
+      save_progress
       if win?
         puts 'You win!'
       elsif lose?
@@ -37,7 +40,7 @@ class Game
     save = read_save(file_name)
     @player = Player.deserialize(save['player'])
     @computer = Computer.deserialize(save['computer'])
-    @remaining_chances = save['remaining_chances']
+    @tries = save['tries']
     @guess_display = save['guess_display']
     @wrong_letters = save['wrong_letters']
   end
@@ -56,7 +59,7 @@ class Game
     JSON.dump({
       :player => @player.serialize,
       :computer => @computer.serialize,
-      :remaining_chances => @remaining_chances,
+      :tries => @tries,
       :guess_display => @guess_display,
       :wrong_letters => @wrong_letters
     })
@@ -75,7 +78,7 @@ class Game
     guess_matched_indices = get_guess_matched_indices(guess, answer)
 
     if incorrect_guess?(guess_matched_indices)
-      @remaining_chances -= 1
+      @tries -= 1
       store_wrong_letters(guess)
     else
       update_display(guess_matched_indices, guess)
@@ -87,7 +90,7 @@ class Game
   end
 
   def lose?
-    @remaining_chances.zero? && !win?
+    @tries.zero? && !win?
   end
 
   def get_guess_matched_indices(guess, answer)

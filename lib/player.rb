@@ -5,7 +5,7 @@ class Player
   include CustomErrors
 
   class << self
-    attr_accessor :player_count
+    attr_accessor :player_count, :instantiated
   end
 
   PLAYER_LIMIT = 2
@@ -66,14 +66,20 @@ class Player
   def serialize
     JSON.dump({
       :player_count => self.class.player_count,
-      :instantiated => @instantiated
     })
   end
 
   def self.deserialize(serialized_obj)
     data = JSON.load(serialized_obj)
-    player = new
     self.player_count = data['player_count']
-    player
+    new
   end
+
 end
+
+
+# player = Player.new
+# json = player.serialize
+# puts Player.deserialize(json)
+
+# player2 = Player.new

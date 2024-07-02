@@ -1,1 +1,0 @@
-{"player":"{\"player_count\":1,\"instantiated\":null}","computer":"{\"computer_count\":1,\"secret_word\":\"automobile\"}","remaining_chances":9,"guess_display":["a","?","?","o","?","o","b","?","?","e"],"wrong_letters":["c"]}
