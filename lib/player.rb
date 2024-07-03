@@ -25,9 +25,9 @@ class Player
       if !valid_prompt?(pattern, response)
         puts reminder_msg
       elsif wrong_letters&.include?(response)
-        puts '\nThe letter already exists in wrong letters.'
+        puts "\nThe letter is already part of the wrong letters. Please try again."
       elsif correct_letters&.include?(response)
-        puts '\nThe letter is correct and already exists.'
+        puts "\nThe letter is already in the guess. Please try a different letter."
       else
         return response
       end
@@ -36,9 +36,9 @@ class Player
 
   def make_guess(wrong_letters, correct_letters)
     prompt(
-      "Please enter an alphabetical letter to make your guess:\n",
+      "\nPlease enter an alphabetical letter to make your guess:\n",
       /^[a-z]{1}$/,
-      "Please enter only one letter from \"a\" to \"z\".\n",
+      "\nPlease enter only one letter from \"a\" to \"z\".\n",
       wrong_letters,
       correct_letters
     )
@@ -46,17 +46,17 @@ class Player
 
   def load_game
     prompt(
-      "Would you like to load your previous progress (y/n)?\n",
+      "\nWould you like to load your previous progress (y/n)?\n",
       /^[yn]{1}$/,
-      "Please enter only \"y\" or \"n\".\n"
+      "\nPlease enter only \"y\" or \"n\".\n"
     )
   end
 
   def save_game
     prompt(
-      "Would you like to save your progress (y/n)?\n",
+      "\nSave current progress (y/n)?\n",
       /^[yn]{1}$/,
-      "Please enter only \"y\" or \"n\".\n"
+      "\nPlease enter only \"y\" or \"n\".\n"
     )
   end
 

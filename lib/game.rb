@@ -11,7 +11,7 @@ class Game
     @player = Player.new
     @computer = Computer.new
     @tries = 10
-    @guess_display = Array.new(computer.secret_word.length, '_')
+    @guess_display = Array.new(computer.secret_word.length, '*')
     @wrong_letters = []
   end
 
@@ -85,7 +85,7 @@ class Game
     end
   end
 
-  def win?(symbol='_')
+  def win?(symbol='*')
     @guess_display.none?(symbol)
   end
 
