@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'errors'
 require 'json'
 
@@ -13,7 +15,7 @@ class Computer
 
   attr_reader :secret_word
 
-  def initialize(file='google-10000-english-no-swears.txt', sep="\n", from=5, to=12)
+  def initialize(file = 'google-10000-english-no-swears.txt', sep = "\n", from = 5, to = 12)
     dictionary = read_dictionary(file, sep)
     @secret_word = select_random_word(dictionary, from, to)
     self.class.computer_count ||= 0
@@ -26,7 +28,7 @@ class Computer
   end
 
   def filter_words(dictionary, from, to)
-    dictionary.select{ |word| word.length.between?(from, to)}
+    dictionary.select { |word| word.length.between?(from, to) }
   end
 
   def select_random_word(dictionary, from, to)
@@ -35,13 +37,13 @@ class Computer
 
   def serialize
     JSON.dump({
-      :computer_count => self.class.computer_count,
-      :secret_word => secret_word,
-    })
+                computer_count: self.class.computer_count,
+                secret_word: secret_word
+              })
   end
 
   def self.deserialize(serialized_obj)
-    data = JSON.load(serialized_obj)
+    data = JSON.parse(serialized_obj)
     self.computer_count = data['computer_count'] - 1
     computer = new
     computer.instance_variable_set(:@secret_word, data['secret_word'])

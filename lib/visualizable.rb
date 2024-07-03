@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rainbow'
 
 module Visualizable
@@ -12,21 +14,21 @@ module Visualizable
     "__________\n|\n|\n|\n|\n|\n|\n|\n|_________",
     "\n|\n|\n|\n|\n|\n|\n|\n|\n|_________",
     "\n\n\n\n\n\n\n\n\n__________"
-  ]
+  ].freeze
 
   def display_hangman(tries)
-    puts HANGMAN_STATES[tries]
+    puts Rainbow(HANGMAN_STATES[tries]).red
   end
 
-  def style_guess_display(guess_display)
-    guess_display.map { |letter| Rainbow(letter).underline }
+  def style_guess_display(guess)
+    guess.map { |letter| Rainbow(letter).underline }
   end
 
-  def display_guess(guess_display)
-    puts "\nGuess: #{style_guess_display(guess_display).join(' ')}"
+  def display_stats(msg, stats, sep='')
+    puts "\n#{msg}: #{style_stats(stats, sep)}"
   end
 
-  def display_wrong_letters(wrong_letters)
-    puts "\nWrong letters: #{wrong_letters.join(', ')}"
+  def style_stats(stats, sep)
+    stats.is_a?(Array) ? stats.join(sep) : stats
   end
 end

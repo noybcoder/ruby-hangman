@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'errors'
 require 'json'
 
@@ -17,7 +19,7 @@ class Player
     handle_game_violations(PlayerLimitViolation, self.class.player_count, PLAYER_LIMIT)
   end
 
-  def prompt(initial_msg, pattern, reminder_msg, wrong_letters=nil, correct_letters=nil)
+  def prompt(initial_msg, pattern, reminder_msg, wrong_letters = nil, correct_letters = nil)
     puts initial_msg
 
     loop do
@@ -66,12 +68,12 @@ class Player
 
   def serialize
     JSON.dump({
-      :player_count => self.class.player_count,
-    })
+                player_count: self.class.player_count
+              })
   end
 
   def self.deserialize(serialized_obj)
-    data = JSON.load(serialized_obj)
+    data = JSON.parse(serialized_obj)
     self.player_count = data['player_count'] - 1
     new
   end

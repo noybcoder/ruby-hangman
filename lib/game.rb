@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'player'
 require_relative 'computer'
 require_relative 'visualizable'
@@ -5,34 +7,34 @@ require 'json'
 
 class Game
   include Visualizable
-  attr_accessor :player, :computer, :tries, :guess_display, :wrong_letters
+  attr_accessor :player, :computer, :tries, :guess, :wrong_letters
 
   def initialize
     @player = Player.new
     @computer = Computer.new
     @tries = 10
-    @guess_display = Array.new(computer.secret_word.length, '*')
+    @guess = Array.new(computer.secret_word.length, ' ')
     @wrong_letters = []
   end
 
   def play
     load_progress
     until win? || lose?
-      puts "\nRemaining Chances: #{@tries}"
+      display_stats('Remaining Chances', @tries)
       update_progress
-      display_guess(@guess_display)
+      display_stats('Guess', style_guess_display(@guess), ' ')
       display_hangman(@tries)
-      display_wrong_letters(@wrong_letters)
+      display_stats('Wrong letters', @wrong_letters, ', ')
       save_progress
       if win?
-        puts 'You win!'
+        puts '\nYou got it!'
       elsif lose?
-        puts 'You lose!'
+        puts "\nYou lose! The answer is \"#{computer.secret_word}\"."
       end
     end
   end
 
-  def load_progress(file_name='save.txt')
+  def load_progress(file_name = 'save.txt')
     from_json(file_name) if player.load_game == 'y'
   end
 
@@ -41,28 +43,28 @@ class Game
     @player = Player.deserialize(save['player'])
     @computer = Computer.deserialize(save['computer'])
     @tries = save['tries']
-    @guess_display = save['guess_display']
+    @guess = save['guess']
     @wrong_letters = save['wrong_letters']
   end
 
   def read_save(file_name)
     save = File.read(file_name)
-    JSON.load(save)
+    JSON.parse(save)
   end
 
-  def save_progress(file_name='save.txt')
-    save = to_json if player.save_game == 'y'
+  def save_progress(file_name = 'save.txt')
+    save = to_json if !(lose? || win?) && player.save_game == 'y'
     write_save(save, file_name)
   end
 
-  def to_json
+  def to_json(*_args)
     JSON.dump({
-      :player => @player.serialize,
-      :computer => @computer.serialize,
-      :tries => @tries,
-      :guess_display => @guess_display,
-      :wrong_letters => @wrong_letters
-    })
+                player: @player.serialize,
+                computer: @computer.serialize,
+                tries: @tries,
+                guess: @guess,
+                wrong_letters: @wrong_letters
+              })
   end
 
   def write_save(save, file_name)
@@ -72,7 +74,7 @@ class Game
   end
 
   def update_progress
-    guess = player.make_guess(@wrong_letters, @guess_display)
+    guess = player.make_guess(@wrong_letters, @guess)
     answer = computer.secret_word
 
     guess_matched_indices = get_guess_matched_indices(guess, answer)
@@ -85,8 +87,8 @@ class Game
     end
   end
 
-  def win?(symbol='*')
-    @guess_display.none?(symbol)
+  def win?(symbol = ' ')
+    @guess.none?(symbol)
   end
 
   def lose?
@@ -106,9 +108,8 @@ class Game
   end
 
   def update_display(guess_match_indices, guess)
-    guess_match_indices.each { |idx| @guess_display[idx] =  guess }
+    guess_match_indices.each { |idx| @guess[idx] = guess }
   end
-
 end
 
 game = Game.new
