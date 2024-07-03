@@ -8,10 +8,11 @@ class Player
     attr_accessor :player_count, :instantiated
   end
 
-  PLAYER_LIMIT = 2
+  PLAYER_LIMIT = 1
   @player_count = 0
 
   def initialize
+    self.class.player_count ||= 0
     self.class.player_count += 1
     handle_game_violations(PlayerLimitViolation, self.class.player_count, PLAYER_LIMIT)
   end
@@ -24,9 +25,9 @@ class Player
       if !valid_prompt?(pattern, response)
         puts reminder_msg
       elsif wrong_letters&.include?(response)
-        puts 'The letter already exists in wrong letters.'
+        puts '\nThe letter already exists in wrong letters.'
       elsif correct_letters&.include?(response)
-        puts 'The letter is correct and already exists.'
+        puts '\nThe letter is correct and already exists.'
       else
         return response
       end
@@ -35,9 +36,9 @@ class Player
 
   def make_guess(wrong_letters, correct_letters)
     prompt(
-      'Please enter an alphabetical letter to make your guess:',
+      "Please enter an alphabetical letter to make your guess:\n",
       /^[a-z]{1}$/,
-      "\nPlease enter only one letter from \"a\" to \"z\".",
+      "Please enter only one letter from \"a\" to \"z\".\n",
       wrong_letters,
       correct_letters
     )
@@ -45,17 +46,17 @@ class Player
 
   def load_game
     prompt(
-      'Would you like to load your previous progress (y/n)?',
+      "Would you like to load your previous progress (y/n)?\n",
       /^[yn]{1}$/,
-      "\nPlease enter only \"y\" or \"n\"."
+      "Please enter only \"y\" or \"n\".\n"
     )
   end
 
   def save_game
     prompt(
-      'Would you like to save your progress (y/n)?',
+      "Would you like to save your progress (y/n)?\n",
       /^[yn]{1}$/,
-      "\nPlease enter only \"y\" or \"n\"."
+      "Please enter only \"y\" or \"n\".\n"
     )
   end
 
@@ -71,15 +72,7 @@ class Player
 
   def self.deserialize(serialized_obj)
     data = JSON.load(serialized_obj)
-    self.player_count = data['player_count']
+    self.player_count = data['player_count'] - 1
     new
   end
-
 end
-
-
-# player = Player.new
-# json = player.serialize
-# puts Player.deserialize(json)
-
-# player2 = Player.new

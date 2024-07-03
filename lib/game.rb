@@ -11,18 +11,18 @@ class Game
     @player = Player.new
     @computer = Computer.new
     @tries = 10
-    @guess_display = Array.new(computer.secret_word.length, '?')
+    @guess_display = Array.new(computer.secret_word.length, '_')
     @wrong_letters = []
   end
 
   def play
     load_progress
     until win? || lose?
-      puts "\nRemaining Chances: #{@tries}\n"
-      display_hangman(@tries)
+      puts "\nRemaining Chances: #{@tries}"
       update_progress
-      puts guess_display.join(' ')
-      p @wrong_letters
+      display_guess(@guess_display)
+      display_hangman(@tries)
+      display_wrong_letters(@wrong_letters)
       save_progress
       if win?
         puts 'You win!'
@@ -85,7 +85,7 @@ class Game
     end
   end
 
-  def win?(symbol='?')
+  def win?(symbol='_')
     @guess_display.none?(symbol)
   end
 
