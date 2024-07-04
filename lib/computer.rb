@@ -23,18 +23,6 @@ class Computer
     handle_game_violations(ComputerLimitViolation, self.class.computer_count, COMPUTER_LIMIT)
   end
 
-  def read_dictionary(file, sep)
-    File.read(file).split(sep)
-  end
-
-  def filter_words(dictionary, from, to)
-    dictionary.select { |word| word.length.between?(from, to) }
-  end
-
-  def select_random_word(dictionary, from, to)
-    filter_words(dictionary, from, to).sample
-  end
-
   def serialize
     JSON.dump({
                 computer_count: self.class.computer_count,
@@ -48,5 +36,19 @@ class Computer
     computer = new
     computer.instance_variable_set(:@secret_word, data['secret_word'])
     computer
+  end
+
+  private
+
+  def read_dictionary(file, sep)
+    File.read(file).split(sep)
+  end
+
+  def filter_words(dictionary, from, to)
+    dictionary.select { |word| word.length.between?(from, to) }
+  end
+
+  def select_random_word(dictionary, from, to)
+    filter_words(dictionary, from, to).sample
   end
 end

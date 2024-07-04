@@ -20,11 +20,11 @@ class Game
   def play
     load_progress
     until win? || lose?
-      display_stats('Remaining Chances', @tries)
+      display_stats('Tries left', @tries, :yellow)
       update_progress
-      display_stats('Guess', style_guess_display(@guess), ' ')
-      display_hangman(@tries)
-      display_stats('Wrong letters', @wrong_letters, ', ')
+      display_stats('Guess', style_guess(@guess), :darkgreen, ' ')
+      display_hangman(@tries, :saddlebrown)
+      display_stats('Wrong letters', @wrong_letters, :red, ', ')
       save_progress
       if win?
         puts '\nYou got it!'

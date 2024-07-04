@@ -19,23 +19,6 @@ class Player
     handle_game_violations(PlayerLimitViolation, self.class.player_count, PLAYER_LIMIT)
   end
 
-  def prompt(initial_msg, pattern, reminder_msg, wrong_letters = nil, correct_letters = nil)
-    puts initial_msg
-
-    loop do
-      response = gets.chomp.downcase
-      if !valid_prompt?(pattern, response)
-        puts reminder_msg
-      elsif wrong_letters&.include?(response)
-        puts "\nThe letter is already part of the wrong letters. Please try again."
-      elsif correct_letters&.include?(response)
-        puts "\nThe letter is already in the guess. Please try a different letter."
-      else
-        return response
-      end
-    end
-  end
-
   def make_guess(wrong_letters, correct_letters)
     prompt(
       "\nPlease enter an alphabetical letter to make your guess:\n",
@@ -62,10 +45,6 @@ class Player
     )
   end
 
-  def valid_prompt?(pattern, response)
-    pattern.match(response)
-  end
-
   def serialize
     JSON.dump({
                 player_count: self.class.player_count
@@ -76,5 +55,28 @@ class Player
     data = JSON.parse(serialized_obj)
     self.player_count = data['player_count'] - 1
     new
+  end
+
+  private
+
+  def prompt(initial_msg, pattern, reminder_msg, wrong_letters = nil, correct_letters = nil)
+    puts initial_msg
+
+    loop do
+      response = gets.chomp.downcase
+      if !valid_prompt?(pattern, response)
+        puts reminder_msg
+      elsif wrong_letters&.include?(response)
+        puts "\nThe letter is already part of the wrong letters. Please try again."
+      elsif correct_letters&.include?(response)
+        puts "\nThe letter is already in the guess. Please try a different letter."
+      else
+        return response
+      end
+    end
+  end
+
+  def valid_prompt?(pattern, response)
+    pattern.match(response)
   end
 end
