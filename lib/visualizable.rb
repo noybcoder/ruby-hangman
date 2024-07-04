@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'rainbow'
+require 'rainbow/refinement'
 
 module Visualizable
   HANGMAN_STATES = [
@@ -14,7 +14,13 @@ module Visualizable
     "__________\n|\n|\n|\n|\n|\n|\n|\n|_________",
     "\n|\n|\n|\n|\n|\n|\n|\n|\n|_________",
     "\n\n\n\n\n\n\n\n\n__________"
-].freeze
+  ].freeze
+
+  HANGMAN_COLORS = %w[black blue magenta cyan white aqua silver aliceblue].freeze
+
+  def select_hangman_color
+    HANGMAN_COLORS.sample.to_sym
+  end
 
   def display_hangman(tries, color, sep = '')
     puts style_stats(HANGMAN_STATES[tries], color, sep)
@@ -24,6 +30,12 @@ module Visualizable
     guess.map { |letter| Rainbow(letter).underline }
   end
 
+  def display_stats(stats_name, stats, color, sep = '')
+    puts "\n#{stats_name}: #{style_stats(stats, color, sep)}"
+  end
+
+  private
+
   def style_stats(stats, color, sep)
     if stats.is_a?(Array)
       formatted_stats = stats.map { |letter| Rainbow(letter).color(color).bright }
@@ -31,9 +43,5 @@ module Visualizable
     else
       Rainbow(stats).color(color).bright
     end
-  end
-
-  def display_stats(stats_name, stats, color, sep = '')
-    puts "\n#{stats_name}: #{style_stats(stats, color, sep)}"
   end
 end

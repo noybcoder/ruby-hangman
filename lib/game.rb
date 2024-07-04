@@ -5,33 +5,60 @@ require_relative 'computer'
 require_relative 'visualizable'
 require 'json'
 
+# Game class that represents the Hangman game logic.
 class Game
-  include Visualizable
-  attr_accessor :player, :computer, :tries, :guess, :wrong_letters
+  include Visualizable # Includes the Visualiable module
 
+  # Allows the read access to the instance variables
+  attr_reader :player, :computer, :tries, :guess, :wrong_letters
+
+  # Public: Initializes a new Game instance.
+  #
+  # Returns a new Game object.
   def initialize
-    @player = Player.new
-    @computer = Computer.new
-    @tries = 10
-    @guess = Array.new(computer.secret_word.length, ' ')
-    @wrong_letters = []
+    @player = Player.new # Create a new Player instance
+    @computer = Computer.new # Create a new Computer instance
+    @tries = 10 # Set the number of tries to 10
+    @guess = Array.new(computer.secret_word.length, ' ') # Set up a guess display
+    @wrong_letters = [] # Set up an empty array to store letters from incorrect guesses
+    @hangman_color = select_hangman_color # Set the color of the hangman display
   end
 
+  # Public: Runs the main game loop.
+  #
+  # Returns nothing.
   def play
     load_progress
     until win? || lose?
-      display_stats('Tries left', @tries, :yellow)
-      update_progress
-      display_stats('Guess', style_guess(@guess), :darkgreen, ' ')
-      display_hangman(@tries, :saddlebrown)
-      display_stats('Wrong letters', @wrong_letters, :red, ', ')
+      display_game_state
       save_progress
-      if win?
-        puts '\nYou got it!'
-      elsif lose?
-        puts "\nYou lose! The answer is \"#{computer.secret_word}\"."
-      end
+      endgame
     end
+  end
+
+  private
+
+  # Private: Displays the message when player wins or loses the game.
+  #
+  # Returns nothing.
+  def endgame
+    if win?
+      puts "\nYou got it!" # Display the message when the player wins
+    elsif lose?
+      # Reveal the secret word when the player loses
+      puts "\nYou lose! The answer is \"#{computer.secret_word}\"."
+    end
+  end
+
+  # Private: Displays the current game state.
+  #
+  # Returns nothing.
+  def display_game_state
+    display_stats('Tries left', @tries, :yellow) # Display the number of tries left
+    update_progress # Update the tries left, the guess display, the hangman display and wrong letters
+    display_stats('Guess', style_guess(@guess), :darkgreen, ' ') # Display the guess
+    display_hangman(@tries, @hangman_color) # Display the hangman
+    display_stats('Wrong letters', @wrong_letters, :red, ', ') # Display the wrong letters
   end
 
   def load_progress(file_name = 'save.txt')
@@ -45,6 +72,7 @@ class Game
     @tries = save['tries']
     @guess = save['guess']
     @wrong_letters = save['wrong_letters']
+    @hangman_color = save['hangman_color'].to_sym
   end
 
   def read_save(file_name)
@@ -53,8 +81,10 @@ class Game
   end
 
   def save_progress(file_name = 'save.txt')
-    save = to_json if !(lose? || win?) && player.save_game == 'y'
-    write_save(save, file_name)
+    if !(lose? || win?) && player.save_game == 'y'
+      save = to_json
+      File.write(file_name, save)
+    end
   end
 
   def to_json(*_args)
@@ -63,14 +93,9 @@ class Game
                 computer: @computer.serialize,
                 tries: @tries,
                 guess: @guess,
-                wrong_letters: @wrong_letters
+                wrong_letters: @wrong_letters,
+                hangman_color: @hangman_color
               })
-  end
-
-  def write_save(save, file_name)
-    game_file = File.open(file_name, 'w')
-    game_file.write(save)
-    game_file.close
   end
 
   def update_progress
