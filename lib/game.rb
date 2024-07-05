@@ -201,7 +201,3 @@ class Game
     guess_match_indices.each { |idx| @guess[idx] = guess }
   end
 end
-
-game = Game.new
-
-game.play
