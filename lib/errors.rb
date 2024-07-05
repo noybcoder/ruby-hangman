@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-# CustomErrors module defines custom error classes for the Mastermind game.
+# CustomErrors module defines custom error classes for the Hangman game.
 module CustomErrors
   # PlayerLimitViolation class represents an error when the number of players exceeds the limit.
   class PlayerLimitViolation < StandardError
     # Public: Initializes a new PlayerLimitViolation instance.
     #
-    # msg - The message to be displayed for the error (default: 'Mastermind only allows up to 2 players.').
+    # msg - The message to be displayed for the error (default: 'Hangman only allows 1 player.').
     # exception_type - The type of exception (default: 'custom').
     #
     # Returns a new PlayerLimitViolation object.
@@ -16,14 +16,14 @@ module CustomErrors
     end
   end
 
-  # PlayerLimitViolation class represents an error when the number of players exceeds the limit.
+  # PlayerLimitViolation class represents an error when the number of computers exceeds the limit.
   class ComputerLimitViolation < StandardError
-    # Public: Initializes a new PlayerLimitViolation instance.
+    # Public: Initializes a new ComputerLimitViolation instance.
     #
-    # msg - The message to be displayed for the error (default: 'Mastermind only allows up to 2 players.').
+    # msg - The message to be displayed for the error (default: 'Hangman only allows 1 computer.').
     # exception_type - The type of exception (default: 'custom').
     #
-    # Returns a new PlayerLimitViolation object.
+    # Returns a new ComputerLimitViolation object.
     def initialize(msg = 'Hangman only allows 1 computer.', exception_type = 'custom')
       @exception_type = exception_type
       super(msg)

@@ -3,3 +3,7 @@
 source 'https://rubygems.org'
 
 # gem "rails"
+group :development, :test do
+  gem 'rainbow'
+  gem 'rubocop'
+end

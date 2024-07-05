@@ -1,1 +1,1 @@
-{"player":"{\"player_count\":1}","computer":"{\"computer_count\":1,\"secret_word\":\"authority\"}","tries":9,"guess":["a"," "," "," "," "," "," "," "," "],"wrong_letters":["e"],"hangman_color":"white"}
+{"player":"{\"player_count\":1}","computer":"{\"computer_count\":1,\"secret_word\":\"disease\"}","tries":6,"guess":[" "," ","s","e","a","s","e"],"wrong_letters":["u","o","q","b"],"hangman_color":"white"}
